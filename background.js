@@ -150,42 +150,11 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
   }
 
   let requestHeaders = details.requestHeaders;
-  const tabId = details.tabId;
 
-  let setReferer = false;
-
-  // if referer exists, set it to google
-  requestHeaders = requestHeaders.map(function(requestHeader) {
-    if (requestHeader.name === 'Referer') {
-      if (details.url.indexOf("wsj.com") !== -1) {
-       requestHeader.value = 'https://www.facebook.com/';
-     } else {
-       requestHeader.value = 'https://www.google.com/';
-     }
-
-     setReferer = true;
-   }
-   return requestHeader;
- });
-
-  // otherwise add it
-  if (!setReferer) {
-    if (details.url.indexOf("wsj.com") !== -1) {
-      requestHeaders.push({
-        name: 'Referer',
-        value: 'https://www.facebook.com/'
-      });
-    } else {
-      requestHeaders.push({
-        name: 'Referer',
-        value: 'https://www.google.com/'
-      });
-    }
-
-  }
-
-  // remove cookies before page load
-  requestHeaders = requestHeaders.map(function(requestHeader) {
+  requestHeaders = requestHeaders.filter(function(requestHeader) {
+      return (requestHeader.name !== 'Referer');
+  }).map(function(requestHeader) {
+    // remove cookies before page load
     for (let siteIndex in allow_cookies) {
       if (details.url.indexOf(allow_cookies[siteIndex]) !== -1) {
         return requestHeader;
@@ -197,16 +166,17 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
     return requestHeader;
   });
 
-  if (tabId !== -1) {
-    // run contentScript inside tab
-    chrome.tabs.executeScript(tabId, {
-      file: 'contentScript.js',
-      runAt: 'document_start'
-    }, function(res) {
-      if (chrome.runtime.lastError || res[0]) {
-        return;
-      }
-    });
+  // Set referer to google or FB
+  if (details.url.indexOf("wsj.com") !== -1) {
+      requestHeaders.push({
+          name: 'Referer',
+          value: 'https://www.facebook.com/'
+      });
+  } else {
+      requestHeaders.push({
+          name: 'Referer',
+          value: 'https://www.google.com/'
+      });
   }
 
   return { requestHeaders: requestHeaders };
