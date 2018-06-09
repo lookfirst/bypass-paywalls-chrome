@@ -45,7 +45,7 @@ var defaultSites = {
 
 const restrictions = {
   'barrons.com': 'barrons.com/articles'
-}
+};
 
 // Don't remove cookies before page load
 const allow_cookies = [
@@ -59,7 +59,7 @@ const allow_cookies = [
 'theage.com.au',
 'economist.com',
 'bostonglobe.com'
-]
+];
 
 // Removes cookies after page load
 const remove_cookies = [
@@ -74,7 +74,7 @@ const remove_cookies = [
 'bostonglobe.com',
 'nytimes.com',
 'wired.com'
-]
+];
 
 function setDefaultOptions() {
   chrome.storage.sync.set({
@@ -120,9 +120,9 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 
 // Set and show default options on install
 chrome.runtime.onInstalled.addListener(function (details) {
-  if (details.reason == "install") {
+  if (details.reason === "install") {
     setDefaultOptions();
-  } else if (details.reason == "update") {
+  } else if (details.reason === "update") {
     // User updated extension
   }
 });

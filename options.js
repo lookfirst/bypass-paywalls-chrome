@@ -43,9 +43,7 @@ var defaultSites = {
 
 // Saves options to chrome.storage
 function save_options() {
-  var gh_url = document.getElementById('bypass_sites').value;
   var inputEls = document.querySelectorAll('#bypass_sites input');
-  var sites = {};
 
   var sites = Array.from(inputEls).reduce(function(memo, inputEl) {
     if (inputEl.checked) {
