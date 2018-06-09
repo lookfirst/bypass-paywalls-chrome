@@ -1,6 +1,6 @@
 'use strict';
 
-var defaultSites = {
+const defaultSites = {
   'The Age': 'theage.com.au',
   'Baltimore Sun': 'baltimoresun.com',
   'Barron\'s': 'barrons.com',
@@ -85,31 +85,31 @@ function setDefaultOptions() {
 }
 
 
-var blockedRegexes = [
+const blockedRegexes = [
 /.+:\/\/.+\.tribdss\.com\//,
 /thenation\.com\/.+\/paywall-script\.php/
 ];
 
-var enabledSites = [];
+let enabledSites = [];
 
 // Get the enabled sites
 chrome.storage.sync.get({
   sites: {}
 }, function(items) {
-  var sites = items.sites;
-  enabledSites = Object.keys(items.sites).map(function(key) {
-    return items.sites[key];
+  const sites = items.sites;
+  enabledSites = Object.keys(sites).map(function(key) {
+    return sites[key];
   });
 });
 
 
 // Listen for changes to options
 chrome.storage.onChanged.addListener(function(changes, namespace) {
-  var key;
+  let key;
   for (key in changes) {
-    var storageChange = changes[key];
+    let storageChange = changes[key];
     if (key === 'sites') {
-      var sites = storageChange.newValue;
+      let sites = storageChange.newValue;
       enabledSites = Object.keys(sites).map(function(key) {
         return sites[key];
       });
@@ -133,9 +133,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
     return { cancel: true };
   }
 
-  var isEnabled = enabledSites.some(function(enabledSite) {
+  const isEnabled = enabledSites.some(function(enabledSite) {
 
-    var useSite = details.url.indexOf("." + enabledSite) !== -1;
+    const useSite = details.url.indexOf("." + enabledSite) !== -1;
 
     if (enabledSite in restrictions) {
       return useSite && details.url.indexOf(restrictions[enabledSite]) !== -1;
@@ -149,10 +149,10 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
     return;
   }
 
-  var requestHeaders = details.requestHeaders;
-  var tabId = details.tabId;
+  let requestHeaders = details.requestHeaders;
+  const tabId = details.tabId;
 
-  var setReferer = false;
+  let setReferer = false;
 
   // if referer exists, set it to google
   requestHeaders = requestHeaders.map(function(requestHeader) {
@@ -186,7 +186,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
 
   // remove cookies before page load
   requestHeaders = requestHeaders.map(function(requestHeader) {
-    for (var siteIndex in allow_cookies) {
+    for (let siteIndex in allow_cookies) {
       if (details.url.indexOf(allow_cookies[siteIndex]) !== -1) {
         return requestHeader;
       }
@@ -216,13 +216,13 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
 
 // remove cookies after page load
 chrome.webRequest.onCompleted.addListener(function(details) {
-  for (var domainIndex in remove_cookies) {
-    var domainVar = remove_cookies[domainIndex];
+  for (let domainIndex in remove_cookies) {
+    let domainVar = remove_cookies[domainIndex];
     if (!enabledSites.includes(domainVar) || details.url.indexOf(domainVar) === -1) {
       continue; // don't remove cookies
     }
     chrome.cookies.getAll({domain: domainVar}, function(cookies) {
-      for (var i=0; i<cookies.length; i++) {
+      for (let i=0; i<cookies.length; i++) {
         chrome.cookies.remove({url: cookies[i].secure ? "https://" : "http://" + cookies[i].domain + cookies[i].path, name: cookies[i].name});
       }
     });
