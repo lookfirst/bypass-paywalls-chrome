@@ -64,6 +64,7 @@ const allow_cookies = [
 // Removes cookies after page load
 const remove_cookies = [
 'asia.nikkei.com',
+'bloomberg.com',
 'ft.com',
 'letemps.ch',
 'fd.nl',
