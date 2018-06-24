@@ -1,4 +1,4 @@
-var defaultSites = {
+const defaultSites = {
   'The Age': 'theage.com.au',
   'Baltimore Sun': 'baltimoresun.com',
   'Barron\'s': 'barrons.com',
@@ -43,11 +43,9 @@ var defaultSites = {
 
 // Saves options to chrome.storage
 function save_options() {
-  var gh_url = document.getElementById('bypass_sites').value;
-  var inputEls = document.querySelectorAll('#bypass_sites input');
-  var sites = {};
+  let inputEls = document.querySelectorAll('#bypass_sites input');
 
-  var sites = Array.from(inputEls).reduce(function(memo, inputEl) {
+  let sites = Array.from(inputEls).reduce(function(memo, inputEl) {
     if (inputEl.checked) {
       memo[inputEl.dataset.key] = inputEl.dataset.value;
     }
@@ -73,16 +71,16 @@ function renderOptions() {
   chrome.storage.sync.get({
     sites: {}
   }, function(items) {
-    var sites = items.sites;
-    var sitesEl = document.getElementById('bypass_sites');
-    for (var key in defaultSites) {
+    let sites = items.sites;
+    let sitesEl = document.getElementById('bypass_sites');
+    for (const key in defaultSites) {
       if (!defaultSites.hasOwnProperty(key)) {
         continue;
       }
 
-      var value = defaultSites[key];
-      var labelEl = document.createElement('label');
-      var inputEl = document.createElement('input');
+      let value = defaultSites[key];
+      let labelEl = document.createElement('label');
+      let inputEl = document.createElement('input');
       inputEl.type = 'checkbox';
       inputEl.dataset.key = key;
       inputEl.dataset.value = value;
@@ -96,14 +94,14 @@ function renderOptions() {
 }
 
 function selectAll() {
-  var inputEls = Array.from(document.querySelectorAll('input'));
+  let inputEls = Array.from(document.querySelectorAll('input'));
   inputEls.forEach(function(inputEl) {
     inputEl.checked = true;
   });
 }
 
 function selectNone() {
-  var inputEls = Array.from(document.querySelectorAll('input'));
+  let inputEls = Array.from(document.querySelectorAll('input'));
   inputEls.forEach(function(inputEl) {
     inputEl.checked = false;
   });
